@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For Test
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+gameoflife KEYWORD1	gameoflife
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+randomfield	KEYWORD2
+step	KEYWORD2
+countcells	KEYWORD2
+is_dead	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+field	LITERAL1

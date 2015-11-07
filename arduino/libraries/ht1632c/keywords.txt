@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For Test
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ht1632c KEYWORD1	ht1632c
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+start	KEYWORD2
+stop	KEYWORD2
+start_blink	KEYWORD2
+stop_blink	KEYWORD2
+set_brightness	KEYWORD2
+set_com_option	KEYWORD2
+begin_sent_data	KEYWORD2
+sent_data	KEYWORD2
+finish_sent_data	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
