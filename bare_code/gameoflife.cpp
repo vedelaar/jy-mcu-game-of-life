@@ -4,7 +4,6 @@
 | vedelaar@gmail.com               |
 \**********************************/
 
-#include <avr/eeprom.h> // eeprom access
 #include <stdlib.h>     // for rand()
 
 #include "gameoflife.h"
@@ -109,17 +108,15 @@ void gameoflife::step()
   }
 }
 
-void gameoflife::randomfield()
+void gameoflife::randomfield(uint16_t seed)
 {
-  srand(eeprom_read_word((uint16_t*)0x02));
-  rand();
+  srand(seed);
   for ( uint8_t h = 0  ; h  < height; ++h )
     for ( uint8_t w = 0 ; w < width*8 ; ++w)
       if (rand() %3)
         setbit(w, h, 0);
       else
         setbit(w, h, 1);
-  eeprom_write_word((uint16_t*)0x02,rand());
 }
 
 uint8_t gameoflife::countcells()
@@ -144,7 +141,7 @@ bool gameoflife::is_dead(uint8_t generations)
   //check if any of these have the same amount of counts
   bool thesame = false;
   for(uint8_t i = 0; i < 3; i++)
-    if (lastcounts[i] == lastcounts[i+1])
+    if (lastcounts[i] == lastcounts[3])
       thesame = true;
   
   if (thesame)

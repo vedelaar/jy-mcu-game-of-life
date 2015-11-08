@@ -31,7 +31,7 @@
 #define setbit(value, bit)   (value|=(1<<bit))
 #define clearbit(value, bit) (value&=(~(1<<bit)))
 
-HT1632C::HT1632C(
+ht1632c::ht1632c(
   volatile uint8_t* const cs_ddr, 
   volatile uint8_t* const cs_port, 
   const    uint8_t         cs_pin, 
@@ -54,7 +54,7 @@ HT1632C::HT1632C(
 {
 }
 
-void HT1632C::send(const uint16_t data, const uint8_t bits)
+void ht1632c::send(const uint16_t data, const uint8_t bits)
 {
   for (uint16_t i = bits; i>0; i--) //MSB first...
   {
@@ -67,7 +67,7 @@ void HT1632C::send(const uint16_t data, const uint8_t bits)
   }
 }
 
-void HT1632C::command(const uint16_t data)
+void ht1632c::command(const uint16_t data)
 {
   setbit(*cs_port, cs_pin);
   clearbit(*cs_port, cs_pin);
@@ -76,7 +76,7 @@ void HT1632C::command(const uint16_t data)
   setbit(*cs_port, cs_pin);
 }
 
-void HT1632C::start(void)
+void ht1632c::start(void)
 {
   setbit(*cs_ddr,cs_pin);
   setbit(*wr_ddr,wr_pin);
@@ -92,47 +92,47 @@ void HT1632C::start(void)
   command(HT1632C_COMMAND_PWMDUTY);
 }
 
-void HT1632C::stop(void)
+void ht1632c::stop(void)
 {
   command(HT1632C_COMMAND_LEDOFF);
   command(HT1632C_COMMAND_SYSDIS);
 }
 
-void HT1632C::start_blink(void)
+void ht1632c::start_blink(void)
 {
   command(HT1632C_COMMAND_BLINKON);
 }
 
-void HT1632C::stop_blink(void)
+void ht1632c::stop_blink(void)
 {
   command(HT1632C_COMMAND_BLINKOFF);
 }
 
-void HT1632C::set_brightness(const uint8_t brightness)
+void ht1632c::set_brightness(const uint8_t brightness)
 {
   uint8_t filtered_brightness = brightness & 0b00001111;
   command(HT1632C_COMMAND_PWMDUTY | (filtered_brightness << 1));
 }
 
-void HT1632C::set_com_option(const uint8_t option)
+void ht1632c::set_com_option(const uint8_t option)
 {
   uint8_t filtered_option = option & 0b00000011;
   command(HT1632C_COMMAND_COMOPTION | (filtered_option << 3));
 }
 
-void HT1632C::begin_sent_data(const uint8_t address)
+void ht1632c::begin_sent_data(const uint8_t address)
 {
   clearbit(*cs_port, cs_pin);
   send(HT1632C_OPERATION_WRITE,3);
   send(address,7);
 }
 
-void HT1632C::sent_data(const uint8_t data)
+void ht1632c::sent_data(const uint8_t data)
 {
   send(data,8);
 }
 
-void HT1632C::finish_sent_data()
+void ht1632c::finish_sent_data()
 {
   setbit(*cs_port, cs_pin);
 }

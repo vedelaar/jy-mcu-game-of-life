@@ -5,13 +5,14 @@
 \**********************************/
 
 #define F_CPU 16000000  // set processor speed
-#include <avr/io.h>     // for DDRB PORTB etc
 
 #include "ht1632c.h"
 #include "gameoflife.h"
 
+#include <avr/eeprom.h>
+
 //all the displays
-HT1632C display1( // this is the display that is executing the code
+ht1632c display1( // this is the display that is executing the code
   &DDRB, 
   &PORTB, 
   3, //cs
@@ -22,7 +23,7 @@ HT1632C display1( // this is the display that is executing the code
   &PORTB, 
   5); //data
 
-HT1632C display2(
+ht1632c display2(
   &DDRD, 
   &PORTD, 
   1, //cs (txd)
@@ -33,7 +34,7 @@ HT1632C display2(
   &PORTB, 
   5); //data
 
-HT1632C display3(
+ht1632c display3(
   &DDRD, 
   &PORTD, 
   0, //cs (rxd)
@@ -44,7 +45,7 @@ HT1632C display3(
   &PORTB, 
   5); //data
 
-HT1632C display4(
+ht1632c display4(
   &DDRD, 
   &PORTD, 
   1, //cs (txd)
@@ -58,79 +59,54 @@ HT1632C display4(
 //the game of life, width (6 * 8 = 48 pixels), height is 40 pixels
 gameoflife gol(6,40);
 
-//show on display 1
-void print_display1_field()
+//initialize the displays
+void initialize_display(ht1632c &display)
 {
-  display1.begin_sent_data();
-  for ( uint8_t w = 1 ; w < 5 ; ++w)
-    for ( uint8_t h = 4 ; h < 12; ++h )
-      display1.sent_data(gol.field[w][h]);
-  display1.finish_sent_data();
+  display.start();
+  display.set_com_option(0);
+  display.set_brightness(15);
 }
 
-//show on display 2
-void print_display2_field()
+//show on display
+void print_display_field(ht1632c &display, uint8_t from, uint8_t to)
 {
-  display2.begin_sent_data();
+  display.begin_sent_data();
   for ( uint8_t w = 1 ; w < 5 ; ++w)
-    for ( uint8_t h = 12 ; h < 20; ++h )
-      display2.sent_data(gol.field[w][h]);
-  display2.finish_sent_data();
+    for ( uint8_t h = from ; h < to; ++h )
+      display.sent_data(gol.field[w][h]);
+  display.finish_sent_data();
 }
 
-//show on display 3
-void print_display3_field()
+int main(void)
 {
-  display3.begin_sent_data();
-  for ( uint8_t w = 1 ; w < 5 ; ++w)
-    for ( uint8_t h = 20 ; h < 28; ++h )
-      display3.sent_data(gol.field[w][h]);
-  display3.finish_sent_data();
-}
-
-//show on display 4
-void print_display4_field()
-{
-  display4.begin_sent_data();
-  for ( uint8_t w = 1 ; w < 5 ; ++w)
-    for ( uint8_t h = 28 ; h < 36; ++h )
-      display4.sent_data(gol.field[w][h]);
-  display4.finish_sent_data();
-}
-
-int main(void) 
-{
-  //initialize the displays
-  display1.start();
-  display1.set_com_option(0);
-  display1.set_brightness(15);
-  display2.start();
-  display2.set_com_option(0);
-  display2.set_brightness(15);
-  display3.start();
-  display3.set_com_option(0);
-  display3.set_brightness(15);
-  display4.start();
-  display4.set_com_option(0);
-  display4.set_brightness(15);
-  
+  //initialize 4 displays
+  initialize_display(display1);
+  initialize_display(display2);
+  initialize_display(display3);
+  initialize_display(display4);
+ 
+  uint16_t seed = eeprom_read_word((uint16_t*)0x02);
+ 
   //initialize field
-  gol.randomfield();
+  gol.randomfield(seed);
   
   while(1)
   {
-    //show on 2 displays
-    print_display1_field();
-    print_display2_field();
-    print_display3_field();
-    print_display4_field();
+    //show on 4 displays
+    print_display_field(display1,  4, 12);
+    print_display_field(display2, 12, 20);
+    print_display_field(display3, 20, 28);
+    print_display_field(display4, 28, 36);
     
     //play
     gol.step();
     
-    //recreate field when it does not do any interesting antmore
+    //recreate field when it does not do any interesting anymore
     if (gol.is_dead(40))
-      gol.randomfield();
+    {
+      gol.randomfield(++seed);
+      eeprom_write_word((uint16_t*)0x02,seed);
+    }
   }
   return(0);
 }

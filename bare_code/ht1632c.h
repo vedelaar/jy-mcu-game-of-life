@@ -7,7 +7,12 @@
 #ifndef ht1632c_h
 #define ht1632c_h
 
-class HT1632C
+//for PORTB etc
+#include <avr/io.h>
+//for utint8_t
+#include <stdint.h>
+
+class ht1632c  
 {
   private:
     //send bits to the display
@@ -29,7 +34,7 @@ class HT1632C
     
   public:
     //Constructor, enter the ports and pins of your display configuration
-    HT1632C(
+    ht1632c (
     volatile uint8_t* const cs_ddr, 
     volatile uint8_t* const cs_port, 
     const    uint8_t         cs_pin, 

@@ -7,6 +7,9 @@
 #ifndef gameoflife_h
 #define gameoflife_h
 
+//for utint8_t
+#include <stdint.h>
+
 class gameoflife
 {
   private:
@@ -41,7 +44,7 @@ class gameoflife
     uint8_t** field;
 
     // Fill the field with random data
-    void randomfield();
+    void randomfield(uint16_t seed);
     
     // Calculate next generation
     void step();
