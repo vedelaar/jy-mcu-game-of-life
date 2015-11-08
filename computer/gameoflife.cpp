@@ -141,7 +141,7 @@ bool gameoflife::is_dead(uint8_t generations)
   //check if any of these have the same amount of counts
   bool thesame = false;
   for(uint8_t i = 0; i < 3; i++)
-    if (lastcounts[i] == lastcounts[i+1])
+    if (lastcounts[i] == lastcounts[3])
       thesame = true;
   
   if (thesame)
